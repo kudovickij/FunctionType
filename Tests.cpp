@@ -22,7 +22,7 @@
 /* ************************************************************************* */
 
 // Define this for ISO C++14 support
-// #define FUNCTION_TYPE_CPP14
+//#define FUNCTION_TYPE_CPP14
 #include "FunctionType.h"
 #include <iostream>
 #include <typeinfo>
@@ -60,6 +60,8 @@ struct Class
   short overload_noexcept(int, float) noexcept { return 1; }
   short rc(int, float)& { return 1; }
   short rc(int, float) const& { return 1; }
+  short rc(int, float)&& { return 1; }
+  short rc(int, float) const&& { return 1; }
   short overload(int, float) const volatile { return 1; }
   short overload_noexcept(int, float) const noexcept { return 1; }
   short overload_noexcept(int, float) volatile noexcept { return 1; }
@@ -67,9 +69,15 @@ struct Class
   short rc_noexcept(int, float) & noexcept { return 1; }
   short rc(int, float) const volatile& { return 1; }
   short rc_noexcept(int, float) const& noexcept { return 1; }
+  short rc(int, float) volatile&& { return 1; }
+  short rc_noexcept(int, float) && noexcept { return 1; }
+  short rc(int, float) const volatile&& { return 1; }
+  short rc_noexcept(int, float) const&& noexcept { return 1; }
   short overload_noexcept(int, float) const volatile noexcept { return 1; }
   short rc_noexcept(int, float) volatile& noexcept { return 1; }
   short rc_noexcept(int, float) const volatile& noexcept { return 1; }
+  short rc_noexcept(int, float) volatile&& noexcept { return 1; }
+  short rc_noexcept(int, float) const volatile&& noexcept { return 1; }
   template <typename ...Args>
   short variadic_template(Args... args) { return 1; }
 
@@ -79,6 +87,8 @@ struct Class
   short overload_noexcept_variadic(...) noexcept { return 1; }
   short rc_variadic(...)& { return 1; }
   short rc_variadic(...) const& { return 1; }
+  short rc_variadic(...)&& { return 1; }
+  short rc_variadic(...) const&& { return 1; }
   short overload_variadic(...) const volatile { return 1; }
   short overload_noexcept_variadic(...) const noexcept { return 1; }
   short overload_noexcept_variadic(...) volatile noexcept { return 1; }
@@ -86,9 +96,15 @@ struct Class
   short rc_noexcept_variadic(...) & noexcept { return 1; }
   short rc_variadic(...) const volatile& { return 1; }
   short rc_noexcept_variadic(...) const& noexcept { return 1; }
+  short rc_variadic(...) volatile&& { return 1; }
+  short rc_noexcept_variadic(...) && noexcept { return 1; }
+  short rc_variadic(...) const volatile&& { return 1; }
+  short rc_noexcept_variadic(...) const&& noexcept { return 1; }
   short overload_noexcept_variadic(...) const volatile noexcept { return 1; }
   short rc_noexcept_variadic(...) volatile& noexcept { return 1; }
   short rc_noexcept_variadic(...) const volatile& noexcept { return 1; }
+  short rc_noexcept_variadic(...) volatile&& noexcept { return 1; }
+  short rc_noexcept_variadic(...) const volatile&& noexcept { return 1; }
 };
 
 float static_mutable(double, float) { return 1.0f; }
@@ -182,6 +198,8 @@ int main(void)
   Tester<decltype(static_cast<short(Class::*)(int, float)noexcept>(&Class::overload_noexcept))>();
   Tester<decltype(static_cast<short(Class::*)(int, float)&>(&Class::rc))>();
   Tester<decltype(static_cast<short(Class::*)(int, float)const&>(&Class::rc))>();
+  Tester<decltype(static_cast<short(Class::*)(int, float)&&>(&Class::rc))>();
+  Tester<decltype(static_cast<short(Class::*)(int, float)const&&>(&Class::rc))>();
   Tester<decltype(static_cast<short(Class::*)(int, float)const volatile>(&Class::overload))>();
   Tester<decltype(static_cast<short(Class::*)(int, float)const noexcept>(&Class::overload_noexcept))>();
   Tester<decltype(static_cast<short(Class::*)(int, float)volatile noexcept>(&Class::overload_noexcept))>();
@@ -189,9 +207,15 @@ int main(void)
   Tester<decltype(static_cast<short(Class::*)(int, float) & noexcept>(&Class::rc_noexcept))>();
   Tester<decltype(static_cast<short(Class::*)(int, float)const volatile&>(&Class::rc))>();
   Tester<decltype(static_cast<short(Class::*)(int, float)const& noexcept>(&Class::rc_noexcept))>();
+  Tester<decltype(static_cast<short(Class::*)(int, float)volatile&&>(&Class::rc))>();
+  Tester<decltype(static_cast<short(Class::*)(int, float) && noexcept>(&Class::rc_noexcept))>();
+  Tester<decltype(static_cast<short(Class::*)(int, float)const volatile&&>(&Class::rc))>();
+  Tester<decltype(static_cast<short(Class::*)(int, float)const&& noexcept>(&Class::rc_noexcept))>();
   Tester<decltype(static_cast<short(Class::*)(int, float)const volatile noexcept>(&Class::overload_noexcept))>();
   Tester<decltype(static_cast<short(Class::*)(int, float)volatile& noexcept>(&Class::rc_noexcept))>();
   Tester<decltype(static_cast<short(Class::*)(int, float)const volatile& noexcept>(&Class::rc_noexcept))>();
+  Tester<decltype(static_cast<short(Class::*)(int, float)volatile&& noexcept>(&Class::rc_noexcept))>();
+  Tester<decltype(static_cast<short(Class::*)(int, float)const volatile&& noexcept>(&Class::rc_noexcept))>();
   Tester<decltype(&Class::variadic_template<int, float>)>();
 
   //Tester<decltype(static_cast<short(Class::*)(...)>(&Class::overload_variadic))>(); // not supported
@@ -200,6 +224,8 @@ int main(void)
   //Tester<decltype(static_cast<short(Class::*)(...)noexcept>(&Class::overload_noexcept_variadic))>(); // not supported
   //Tester<decltype(static_cast<short(Class::*)(...)&>(&Class::rc_variadic))>(); // not supported
   //Tester<decltype(static_cast<short(Class::*)(...)const&>(&Class::rc_variadic))>(); // not supported
+  //Tester<decltype(static_cast<short(Class::*)(...)&&>(&Class::rc_variadic))>(); // not supported
+  //Tester<decltype(static_cast<short(Class::*)(...)const&&>(&Class::rc_variadic))>(); // not supported
   //Tester<decltype(static_cast<short(Class::*)(...)const volatile>(&Class::overload_variadic))>(); // not supported
   //Tester<decltype(static_cast<short(Class::*)(...)const noexcept>(&Class::overload_noexcept_variadic))>(); // not supported
   //Tester<decltype(static_cast<short(Class::*)(...)volatile noexcept>(&Class::overload_noexcept_variadic))>(); // not supported
@@ -207,9 +233,15 @@ int main(void)
   //Tester<decltype(static_cast<short(Class::*)(...) & noexcept>(&Class::rc_noexcept_variadic))>(); // not supported
   //Tester<decltype(static_cast<short(Class::*)(...)const volatile&>(&Class::rc_variadic))>(); // not supported
   //Tester<decltype(static_cast<short(Class::*)(...)const& noexcept>(&Class::rc_noexcept_variadic))>(); // not supported
+  //Tester<decltype(static_cast<short(Class::*)(...)volatile&&>(&Class::rc_variadic))>(); // not supported
+  //Tester<decltype(static_cast<short(Class::*)(...) && noexcept>(&Class::rc_noexcept_variadic))>(); // not supported
+  //Tester<decltype(static_cast<short(Class::*)(...)const volatile&&>(&Class::rc_variadic))>(); // not supported
+  //Tester<decltype(static_cast<short(Class::*)(...)const&& noexcept>(&Class::rc_noexcept_variadic))>(); // not supported
   //Tester<decltype(static_cast<short(Class::*)(...)const volatile noexcept>(&Class::overload_noexcept_variadic))>(); // not supported
   //Tester<decltype(static_cast<short(Class::*)(...)volatile& noexcept>(&Class::rc_noexcept_variadic))>(); // not supported
   //Tester<decltype(static_cast<short(Class::*)(...)const volatile& noexcept>(&Class::rc_noexcept_variadic))>(); // not supported
+  //Tester<decltype(static_cast<short(Class::*)(...)volatile&& noexcept>(&Class::rc_noexcept_variadic))>(); // not supported
+  //Tester<decltype(static_cast<short(Class::*)(...)const volatile&& noexcept>(&Class::rc_noexcept_variadic))>(); // not supported
 
   std::cout << std::endl << "Class methods, implicit deduction" << std::endl << std::endl;
 
@@ -219,6 +251,8 @@ int main(void)
   Tester(static_cast<short(Class::*)(int, float)noexcept>(&Class::overload_noexcept));
   Tester(static_cast<short(Class::*)(int, float)&>(&Class::rc));
   Tester(static_cast<short(Class::*)(int, float)const&>(&Class::rc));
+  Tester(static_cast<short(Class::*)(int, float)&&>(&Class::rc));
+  Tester(static_cast<short(Class::*)(int, float)const&&>(&Class::rc));
   Tester(static_cast<short(Class::*)(int, float)const volatile>(&Class::overload));
   Tester(static_cast<short(Class::*)(int, float)const noexcept>(&Class::overload_noexcept));
   Tester(static_cast<short(Class::*)(int, float)volatile noexcept>(&Class::overload_noexcept));
@@ -226,9 +260,15 @@ int main(void)
   Tester(static_cast<short(Class::*)(int, float) & noexcept>(&Class::rc_noexcept));
   Tester(static_cast<short(Class::*)(int, float)const volatile&>(&Class::rc));
   Tester(static_cast<short(Class::*)(int, float)const& noexcept>(&Class::rc_noexcept));
+  Tester(static_cast<short(Class::*)(int, float)volatile&&>(&Class::rc));
+  Tester(static_cast<short(Class::*)(int, float) && noexcept>(&Class::rc_noexcept));
+  Tester(static_cast<short(Class::*)(int, float)const volatile&&>(&Class::rc));
+  Tester(static_cast<short(Class::*)(int, float)const&& noexcept>(&Class::rc_noexcept));
   Tester(static_cast<short(Class::*)(int, float)const volatile noexcept>(&Class::overload_noexcept));
   Tester(static_cast<short(Class::*)(int, float)volatile& noexcept>(&Class::rc_noexcept));
   Tester(static_cast<short(Class::*)(int, float)const volatile& noexcept>(&Class::rc_noexcept));
+  Tester(static_cast<short(Class::*)(int, float)volatile&& noexcept>(&Class::rc_noexcept));
+  Tester(static_cast<short(Class::*)(int, float)const volatile&& noexcept>(&Class::rc_noexcept));
   Tester(&Class::variadic_template<int, float>);
 
   //Tester(static_cast<short(Class::*)(...)>(&Class::overload_variadic)); // not supported
@@ -237,6 +277,8 @@ int main(void)
   //Tester(static_cast<short(Class::*)(...)noexcept>(&Class::overload_noexcept_variadic)); // not supported
   //Tester(static_cast<short(Class::*)(...)&>(&Class::rc_variadic)); // not supported
   //Tester(static_cast<short(Class::*)(...)const&>(&Class::rc_variadic)); // not supported
+  //Tester(static_cast<short(Class::*)(...)&&>(&Class::rc_variadic)); // not supported
+  //Tester(static_cast<short(Class::*)(...)const&&>(&Class::rc_variadic)); // not supported
   //Tester(static_cast<short(Class::*)(...)const volatile>(&Class::overload_variadic)); // not supported
   //Tester(static_cast<short(Class::*)(...)const noexcept>(&Class::overload_noexcept_variadic)); // not supported
   //Tester(static_cast<short(Class::*)(...)volatile noexcept>(&Class::overload_noexcept_variadic)); // not supported
@@ -244,9 +286,15 @@ int main(void)
   //Tester(static_cast<short(Class::*)(...) & noexcept>(&Class::rc_noexcept_variadic)); // not supported
   //Tester(static_cast<short(Class::*)(...)const volatile&>(&Class::rc_variadic)); // not supported
   //Tester(static_cast<short(Class::*)(...)const& noexcept>(&Class::rc_noexcept_variadic)); // not supported
+  //Tester(static_cast<short(Class::*)(...)volatile&&>(&Class::rc_variadic)); // not supported
+  //Tester(static_cast<short(Class::*)(...) && noexcept>(&Class::rc_noexcept_variadic)); // not supported
+  //Tester(static_cast<short(Class::*)(...)const volatile&&>(&Class::rc_variadic)); // not supported
+  //Tester(static_cast<short(Class::*)(...)const&& noexcept>(&Class::rc_noexcept_variadic)); // not supported
   //Tester(static_cast<short(Class::*)(...)const volatile noexcept>(&Class::overload_noexcept_variadic)); // not supported
   //Tester(static_cast<short(Class::*)(...)volatile& noexcept>(&Class::rc_noexcept_variadic)); // not supported
   //Tester(static_cast<short(Class::*)(...)const volatile& noexcept>(&Class::rc_noexcept_variadic)); // not supported
+  //Tester(static_cast<short(Class::*)(...)volatile&& noexcept>(&Class::rc_noexcept_variadic)); // not supported
+  //Tester(static_cast<short(Class::*)(...)const volatile&& noexcept>(&Class::rc_noexcept_variadic)); // not supported
 
   return 0;
 }

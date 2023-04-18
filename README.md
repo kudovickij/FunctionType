@@ -6,11 +6,12 @@ A simple single-file implementation of a metaprogramming utility for function ty
 
 Characteristics
 ---------
-<b>FunctionType</b> is able to deduce the decayed function's type, arguments and return value for most function types. <b>FunctionType</b> supports the following qualifiers, and their permitted permutations:  
+<b>FunctionType</b> is able to deduce the decayed function's type, arguments and return value for most function types (including lambdas). <b>FunctionType</b> supports the following qualifiers, and their permitted permutations:  
 - const qualifier
 - volatile qualifier
 - mutable specifier
 - reference qualifier
+- rvalue reference qualifier
 - noexcept qualifier (since <i>ISO C++17</i>)
 
 Due to the changes to type deduction in <i>ISO C++17</i>, mainly due to the <i>P0012R1	Exception specification as part of the type system</i> feature, <i>ISO C++17</i> is the current default minimum supported version. If you would like to use the utility with <i>ISO C++14</i>, define <b>FUNCTION_TYPE_CPP14</b> before you include the FunctionType.h header. This workaround is needed due to MSC not initializing <b>__cplusplus</b> variable properly.
